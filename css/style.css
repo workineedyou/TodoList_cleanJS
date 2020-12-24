@@ -1,0 +1,44 @@
+.container {
+    padding: 20px 180px;
+    width: 1000px;
+}
+
+.inp-data {
+    width: 400px;
+}
+
+.to-right {
+    text-align: end;
+}
+
+.row {
+    border-radius: 3px;
+    cursor: pointer;
+    align-items: baseline;
+    padding: 16px 0 0 0;
+}
+
+.row:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.marked {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.todo-item {
+    background-color: #46616B;
+    color: burlywood;    
+}
+
+.active {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.item-done {
+    text-decoration: line-through;
+}
+
+.list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
