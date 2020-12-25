@@ -9,18 +9,7 @@
 
 .to-right {
     text-align: end;
-}
-
-.row {
-    border-radius: 3px;
-    cursor: pointer;
-    align-items: baseline;
-    padding: 16px 0 0 0;
-}
-
-.row:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
+}   
 
 .marked {
     background-color: rgba(255, 255, 255, 0.2);
@@ -41,4 +30,9 @@
 
 .list-group-item:hover {
     background-color: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+}
+
+.hidden {
+    visibility: hidden;
 }

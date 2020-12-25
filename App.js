@@ -15,19 +15,22 @@ class App {
             { id: 5, content: 'just relax and smoke weed!', selected: false, done: false },
         ]        
 
-        this.update()
+        this.updateContent()
     }
 
-    update() {
+    updateContent() {
 
-        // массив выбраных (выделеных) задач
-        this.selectedItems = this.list.filter(item => item.selected)
-
+        const that = this
+       
         const ulElement = this.el.querySelector('.item-data')
 
+
+        // массив выбранных (выделенных) задач
+        this.selectedItems = this.list.filter(item => item.selected)
+        
         let btnWarning = this.el.querySelector('.btn-warning')
         let btnSuccess = this.el.querySelector('.btn-success')
-
+        
         // если выбран хотябы 1 элемент списка - делаем верхние кнопки активными
         if (this.selectedItems.length > 0) {
             btnWarning.removeAttribute('disabled')
@@ -36,6 +39,32 @@ class App {
             btnWarning.setAttribute('disabled', 'disabled')
             btnSuccess.setAttribute('disabled', 'disabled')            
         }
+
+        // поле ввода текта
+        const textInput = this.el.querySelector('.inp-data')
+
+        // форма
+        const form = this.el.querySelector('.inp-form')
+
+        // добавление задачи в массив
+        form.addEventListener('submit', function(e) {
+
+            e.preventDefault()
+
+            if (!textInput.value) {
+                return
+            }
+
+            that.list.unshift({
+                id: Math.floor((Math.random() * 100) + 6),
+                content: textInput.value,
+                selected: false,
+                done: false
+            })
+
+            that.updateContent()
+            textInput.value = ''
+        })       
 
         ulElement.innerHTML = ''
 
@@ -52,16 +81,21 @@ class App {
                 liElement.querySelector('span').classList.add('item-done')
             }
 
+            if (this.selectedItems.length > 0) {
+                liElement.querySelector('.btn-action').classList.add('hidden')
+            }
+            
+
             liElement.addEventListener('click', (e) => {
 
                 if (e.target.outerText === 'Done') {
 
                     item.done = !item.done
-                    this.update()
+                    this.updateContent()
 
                 } else if (e.target.tagName === 'DIV') {
                     item.selected = !item.selected
-                    this.update()
+                    this.updateContent()
 
                 } else {
                     console.log(888);
@@ -77,12 +111,16 @@ class App {
 
         const divElement = document.createElement('div')
 
+        
+
         divElement.innerHTML = `
                     <div class="container">
                         <ul class="list-group">
                             <li class="list-group-item d-flex justify-content-between">
                                 <div>
-                                    <input type="text" class="form-control inp-data">
+                                    <form action="#" method="POST" class="inp-form">
+                                        <input type="text" class="form-control inp-data">
+                                    </form>
                                 </div>
                                 <div>
                                     <div class="btn-group btn-action">
