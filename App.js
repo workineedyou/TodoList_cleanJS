@@ -1,7 +1,5 @@
 class App {
 
-    selectedItems = []
-
     constructor(props) {
 
         this.el = document.getElementById(props.el)
@@ -11,33 +9,57 @@ class App {
             { id: 1, content: 'do something', selected: false, done: false },
             { id: 2, content: 'do something else', selected: false, done: false },
             { id: 3, content: 'drink coffee', selected: false, done: false },
-            { id: 4, content: 'roll the joint', selected: false, done: true },
+            { id: 4, content: 'roll the joint', selected: false, done: false },
             { id: 5, content: 'just relax and smoke weed!', selected: false, done: false },
-        ]        
+        ]       
+
+        this.selectedItems = []
 
         this.updateContent()
-    }
+    }  
 
     updateContent() {
 
         const that = this
-       
-        const ulElement = this.el.querySelector('.item-data')
+        
+        // кнопки у поля ввода текста
+        const btnControls = this.el.querySelectorAll('.btn-control')        
 
+        btnControls.forEach(btn => btn.setAttribute('disabled', true))
 
-        // массив выбранных (выделенных) задач
+        // помещаем в массив выделенные задачи
         this.selectedItems = this.list.filter(item => item.selected)
-        
-        let btnWarning = this.el.querySelector('.btn-warning')
-        let btnSuccess = this.el.querySelector('.btn-success')
-        
+
+        // множественное удаление выделенных задач
+        btnControls[0].addEventListener('click', () => {
+            
+            this.list = this.list.filter(item => !item.selected)
+            this.updateContent()
+        })
+
+        // массовая пометка о завершении выделенных задач
+        btnControls[1].addEventListener('click', () => {
+
+            const ids = this.selectedItems.map(item => item.id)
+
+            for (let i = 0; i < ids.length; i++) {
+
+                this.list = this.list.map(item => {
+
+                    if (item.id === ids[i]) {
+                        item.done = true
+                    }
+
+                    return item
+                })
+            }
+            
+            this.updateContent()            
+        })
+
         // если выбран хотябы 1 элемент списка - делаем верхние кнопки активными
-        if (this.selectedItems.length > 0) {
-            btnWarning.removeAttribute('disabled')
-            btnSuccess.removeAttribute('disabled')
-        } else {
-            btnWarning.setAttribute('disabled', 'disabled')
-            btnSuccess.setAttribute('disabled', 'disabled')            
+        if (this.selectedItems.length) {
+            btnControls.forEach(btn => btn.removeAttribute('disabled'))           
         }
 
         // поле ввода текта
@@ -60,11 +82,20 @@ class App {
                 content: textInput.value,
                 selected: false,
                 done: false
-            })
+            })          
 
             that.updateContent()
             textInput.value = ''
-        })       
+        })     
+        
+        this.createItem()       
+    }
+
+    // генерация элемента списка
+    createItem() {
+
+        // получаем элемент в который будут вставлятся элементы списка задач
+        const ulElement = this.el.querySelector('.item-data')
 
         ulElement.innerHTML = ''
 
@@ -73,6 +104,7 @@ class App {
 
             let liElement = this.getItemElement(item)
 
+            // добавление необходимых классов
             if (item.selected) {
                 liElement.classList.add('active')
             }
@@ -81,11 +113,12 @@ class App {
                 liElement.querySelector('span').classList.add('item-done')
             }
 
-            if (this.selectedItems.length > 0) {
+            // скрываем кнопки управления если выделена одна и более задач
+            if (this.selectedItems.length) {
                 liElement.querySelector('.btn-action').classList.add('hidden')
-            }
-            
+            }            
 
+            // события для задачи
             liElement.addEventListener('click', (e) => {
 
                 if (e.target.outerText === 'Done') {
@@ -97,8 +130,12 @@ class App {
                     item.selected = !item.selected
                     this.updateContent()
 
-                } else {
-                    console.log(888);
+                } else if (e.target.outerText === 'Delete') {
+                    let id = item.id
+
+                    // в обновленном массиве оставляем все задачи кроме удаленной
+                    this.list = this.list.filter(item => item.id !== id)                    
+                    this.updateContent()
                 }
             })
 
@@ -109,9 +146,7 @@ class App {
     // генерация верхнего поля для ввода данных
     getInputElement() {
 
-        const divElement = document.createElement('div')
-
-        
+        const divElement = document.createElement('div')       
 
         divElement.innerHTML = `
                     <div class="container">
@@ -124,8 +159,8 @@ class App {
                                 </div>
                                 <div>
                                     <div class="btn-group btn-action">
-                                        <button type="button" class="btn btn-warning">Delete</button>
-                                        <button type="button" class="btn btn-success">Done</button>
+                                        <button type="button" class="btn btn-warning btn-control">Delete</button>
+                                        <button type="button" class="btn btn-success btn-control">Done</button>
                                     </div>
                                 </div>
                             </li>

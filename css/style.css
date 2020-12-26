@@ -26,6 +26,7 @@
 
 .item-done {
     text-decoration: line-through;
+    color: #556466;
 }
 
 .list-group-item:hover {
