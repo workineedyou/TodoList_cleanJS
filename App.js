@@ -2,16 +2,23 @@ class App {
 
     constructor(props) {
 
+        // корень приложения
         this.el = document.getElementById(props.el)
+
+        // поле ввода
         this.el.append(this.getInputElement())
 
-        this.list = [
-            { id: 1, content: 'do something', selected: false, done: false },
-            { id: 2, content: 'do something else', selected: false, done: false },
-            { id: 3, content: 'drink coffee', selected: false, done: false },
-            { id: 4, content: 'roll the joint', selected: false, done: false },
-            { id: 5, content: 'just relax and smoke weed!', selected: false, done: false },
-        ]       
+        // получение данных из локалсториджа
+        this.data = localStorage.getItem('data')
+
+        // парсинг в объект
+        this.prepareData = JSON.parse(this.data)
+
+        // если в локалсторидже пусто - будем юзать пустой массив
+        this.list = this.prepareData || [] 
+        
+        // поле для записи данных в локалсторидж
+        this.str = '' 
 
         this.selectedItems = []
 
@@ -40,6 +47,7 @@ class App {
         // массовая пометка о завершении выделенных задач
         btnControls[1].addEventListener('click', () => {
 
+            // получаем все id выделенных элементов списка
             const ids = this.selectedItems.map(item => item.id)
 
             for (let i = 0; i < ids.length; i++) {
@@ -47,9 +55,9 @@ class App {
                 this.list = this.list.map(item => {
 
                     if (item.id === ids[i]) {
-                        item.done = true
+                        item.done = !item.done
+                        item.selected = false
                     }
-
                     return item
                 })
             }
@@ -86,9 +94,13 @@ class App {
 
             that.updateContent()
             textInput.value = ''
-        })     
-        
-        this.createItem()       
+        }) 
+                
+        this.createItem()   
+
+        // запись данных в локалсторидж        
+        this.str = JSON.stringify(this.list)        
+        localStorage.setItem('data', this.str) 
     }
 
     // генерация элемента списка
@@ -118,7 +130,7 @@ class App {
                 liElement.querySelector('.btn-action').classList.add('hidden')
             }            
 
-            // события для задачи
+            // события для задачи (пометка о выполнении / выделение / удаление)
             liElement.addEventListener('click', (e) => {
 
                 if (e.target.outerText === 'Done') {
